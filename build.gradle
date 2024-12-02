@@ -1,0 +1,110 @@
+/*
+ build.gradle
+ Author: Nathanael G. Reese
+ Description: Defines gradle scripts to run, build, package, test, etc.
+ Date Created: 08.26.2024
+ Last Edited: 08.29.2024
+ Version: 1.0.0
+ Usage: ./gradlew <command> # UNIX-LIKE SYSTEMS
+        .\gradlew.bat <command> # WINDOWS SYSTEMS
+ Commands:
+    build: compiles and builds classes
+    run: runs application
+    test: runs all testing
+    clean: deletes all binaries
+    jar: packages classes and dependencies into jar file
+    check: checks this file to ensure proper conventions
+    javadoc: generates javadocs
+    eclipse: generates eclipse config files for ide
+    cleanEclipse: cleans all eclipse config files
+*/
+
+plugins {
+    // Application Plugins
+    id 'java'
+    id 'application'
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+    // IDE Plugins
+    id 'eclipse'
+    // Test/Pipeline Plugins
+}
+
+// Set the group and version for the project
+group 'com.libretax'
+version '1.0.0'
+
+// Define the repositories where dependencies will be downloaded from
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes\
+            'Implementation-Title': 'com-libretax-desktop',\
+            'Implementation-Version': archiveVersion,\
+            'Main-Class': application.mainClass
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
+}
+
+javadoc {
+    maxMemory '256m'
+    source = sourceSets.main.allJava
+    destinationDir = file("$buildDir/docs/javadoc")
+}
+
+test {
+    useJUnitPlatform()
+
+    maxHeapSize = '1G' // Edit to needs, possibly overkill.
+    maxParallelForks = '4' // Need to test with JFX threads.
+    ignoreFailures = true // Change to false for dist. testing.
+    dryRun = true // Change to false after first run through
+
+    testLogging {
+        events "passed", "skipped", "failed" // All log data.
+        showStandardStreams = true
+    }
+
+}
+
+
+
+// Java Application Definitions
+java {
+    // Name Source and Target Compatibility
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    //Set the toolchain Java version.
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+// Point to Main Class
+application {
+    mainClass = 'com.libretax.desktop.LibreTax'
+    applicationName = 'LibreTax Desktop'
+}
