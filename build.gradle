@@ -2,8 +2,8 @@
  build.gradle
  Author: Nathanael G. Reese
  Description: Defines gradle scripts to run, build, package, test, etc.
- Date Created: 08.26.2024
- Last Edited: 08.29.2024
+ Date Created: 12.2.2024
+ Last Edited: 12.2.2024
  Version: 1.0.0
  Usage: ./gradlew <command> # UNIX-LIKE SYSTEMS
         .\gradlew.bat <command> # WINDOWS SYSTEMS
